@@ -11,6 +11,21 @@
 			} else {
 				$( this ).parent( '.dntplgn_donate_monthly' ).children( '.dntplgn_monthly_other_sum' ).removeClass( 'checked' );
 				$( this ).parent( '.dntplgn_donate_monthly' ).children( '.dntplgn_monthly_other_sum' ).val( '' );
+				$( this ).parents( '.dntplgn_donate_monthly' ).find( '.dntplgn_submit_button' ).off('click');
+			}
+		});
+
+		$( '.dntplgn_once_other_sum' ).hide();
+		$( '.dntplgn_donate_once input[ name="amount" ]' ).click( function() {
+			if ( $( this ).parent( '.dntplgn_donate_once' ).children( '#single_fourth_button' ).attr( 'checked' ) ) {
+				$( this ).parent( '.dntplgn_donate_once' ).children( '.dntplgn_once_other_sum' ).addClass( 'checked' );
+				$( this ).parent( '.dntplgn_donate_once' ).children( '.dntplgn_submit_button' ).click( function() {
+					$( this ).parent( '.dntplgn_donate_once' ).children( 'input[ name="amount" ]' ).val( $( this ).parent( '.dntplgn_donate_once' ).children( '.dntplgn_once_other_sum' ).val() );
+				})
+			} else {
+				$( this ).parent( '.dntplgn_donate_once' ).children( '.dntplgn_once_other_sum' ).removeClass( 'checked' );
+				$( this ).parent( '.dntplgn_donate_once' ).children( '.dntplgn_once_other_sum' ).val( '' );
+				$( this ).parents( '.dntplgn_donate_once' ).find( '.dntplgn_submit_button' ).off('click');
 			}
 		});
 		$( '.dntplgn_form_wrapper' ).tabs();

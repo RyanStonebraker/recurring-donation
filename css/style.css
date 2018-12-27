@@ -16,43 +16,21 @@
     text-align: center;
     text-transform: uppercase;
     width: 50%;
+    display: flex;
 }
 #tabs.dntplgn_form_wrapper > ul li a {
     margin: 0;
     outline: medium none;
-    /*width: 85%;*/
     width: 100%;
 }
-#tabs.dntplgn_form_wrapper .dntplgn_donate_monthly > label {
-    font-size: 14px;
-}
-#tabs.dntplgn_form_wrapper .dntplgn_donate_monthly > label span {
-    color: gray;
-}
-.dntplgn_donate_monthly .dntplgn_monthly_other_sum.checked {
+
+.dntplgn_donate_monthly .dntplgn_monthly_other_sum.checked, .dntplgn_donate_once .dntplgn_once_other_sum.checked {
     display: block !important;
 }
-.dntplgn_monthly_other_sum {
-    float: right;
-    margin-top: 1%;
-    width: 30%;
+.dntplgn_donate_monthly .dntplgn_monthly_other_sum{
+    margin-top: 10px;
 }
-#tabs-1 .dntplgn_donate_monthly > input#dntplgn_submit_button {
-    float: left;
-    margin-top: 5%;
-}
-#tabs-2 .dntplgn_donate_monthly > input#dntplgn_submit_button {
-    float: right;
-    margin-top: 1%;
-}
-#tabs-2 .dntplgn_donate_monthly input#dntplgn_once_amount {
-    float: left;
-    margin-top: 2%;
-    width: 50%;
-}
-.widget-area #dntplgn_monthly_other_sum {
-    width: 100%;
-}
+
 .widget-area #tabs-2 input#dntplgn_once_amount {
     margin-bottom: 15%;
 }
@@ -69,4 +47,61 @@ span.dntplgn_error_message {
 }
 .clear {
     clear: both;
+}
+
+.dntplgn_monthly_donation_select_label, .dntplgn_once_enter_donation_label {
+    margin: 10px 0;
+}
+.dntplgn_donate_monthly .dntplgn_submit_button{
+    margin: 15px 0 10px 0;
+}
+
+/* Custom Styling */
+
+div#tabs.dntplgn_form_wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+div#tabs.dntplgn_form_wrapper a.ui-tabs-anchor {
+  white-space: pre-wrap;
+}
+
+div#tabs.dntplgn_form_wrapper form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+div#tabs.dntplgn_form_wrapper form input[type="radio"], label {
+  display: flex;
+  align-items: center;
+}
+
+div#tabs.dntplgn_form_wrapper form input.dntplgn_monthly_other_sum, input.dntplgn_once_other_sum {
+  margin: 0;
+  margin-left: 5px;
+  flex: 1;
+  text-align: center;
+  min-width: 125px;
+}
+
+div#tabs.dntplgn_form_wrapper form div.filler {
+  display: flex;
+  width: 100%;
+}
+
+div#tabs.dntplgn_form_wrapper form input.dntplgn_submit_button {
+  transition: color, background-color 0.3s ease;
+  margin: 0;
+  width: 100%;
+  height: 30px;
+  border-radius: 15px;
+}
+
+div#tabs.dntplgn_form_wrapper form input.dntplgn_submit_button:hover {
+  background-color: rgb(63, 89, 163);
+  color: #F4CF71;
+  cursor:pointer;
 }
