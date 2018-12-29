@@ -60,38 +60,37 @@ if ( ! function_exists( 'dntplgn_register_settings' ) ) {
 	}
 }
 // Admin plugin settings page content function
-if ( ! function_exists( 'dntplgn_settings_page' ) ) {
+if ( !function_exists( 'dntplgn_settings_page' ) ) {
 	function dntplgn_settings_page() {
 
 		global $dntplgn_options;
 		$message = '';
 		if( isset( $_POST['dntplgn_submit'] ) && check_admin_referer( plugin_basename(__FILE__), 'dntplgn_nonce_name' ) ) {
+	    //Save paypal email address
+	    if ( isset( $_POST['dntplgn_paypal_account'] ) ) {
+        if ( is_email( $_POST['dntplgn_paypal_account'] ) ) {
+          $dntplgn_options['dntplgn_paypal_email'] = $_POST['dntplgn_paypal_account'];
+        } else {
+          $error_message = __( 'Email is incorrect', 'donateplugin' );
+        }
+	    }
 
-                    //Save paypal email address
-                    if ( isset( $_POST['dntplgn_paypal_account'] ) ) {
-                            if ( is_email( $_POST['dntplgn_paypal_account'] ) ) {
-                                    $dntplgn_options['dntplgn_paypal_email'] = $_POST['dntplgn_paypal_account'];
-                            } else {
-                                    $error_message = __( 'Email is incorrect', 'donateplugin' );
-                            }
-                    }
+	    //Save currency code
+	    $dntplgn_options['dntplgn_payment_currency'] = sanitize_text_field($_POST["dntplgn_payment_currency"]);
+	    $dntplgn_options['dntplgn_currency_symbol'] = sanitize_text_field($_POST["dntplgn_currency_symbol"]);
+	    $dntplgn_options['dntplgn_return_url'] = sanitize_text_field(trim($_POST["dntplgn_return_url"]));
+	    $dntplgn_options['dntplgn_pm_label'] = sanitize_text_field($_POST["dntplgn_pm_label"]);
+			$dntplgn_options['dntplgn_company_matching'] = sanitize_textarea_field($_POST["dntplgn_company_matching"]);
 
-                    //Save currency code
-                    $dntplgn_options['dntplgn_payment_currency'] = sanitize_text_field($_POST["dntplgn_payment_currency"]);
-                    $dntplgn_options['dntplgn_currency_symbol'] = sanitize_text_field($_POST["dntplgn_currency_symbol"]);
-                    $dntplgn_options['dntplgn_return_url'] = sanitize_text_field(trim($_POST["dntplgn_return_url"]));
-                    $dntplgn_options['dntplgn_pm_label'] = sanitize_text_field($_POST["dntplgn_pm_label"]);
-
-                    $message = __( 'Settings saved' , 'donateplugin' );
-                    update_option( 'dntplgn_options', $dntplgn_options );
+	    $message = __( 'Settings saved' , 'donateplugin' );
+	    update_option( 'dntplgn_options', $dntplgn_options );
 		}
-
-
-                //$dntplgn_options = get_option('dntplgn_options');
-                $defaultCurrency = isset($dntplgn_options['dntplgn_payment_currency']) ? $dntplgn_options['dntplgn_payment_currency'] : 'USD';
-                $dntplgn_currency_symbol = isset($dntplgn_options['dntplgn_currency_symbol']) ? $dntplgn_options['dntplgn_currency_symbol'] : '$';
-                $dntplgn_return_url = isset($dntplgn_options['dntplgn_return_url']) ? $dntplgn_options['dntplgn_return_url'] : '';
-                $dntplgn_pm_label = isset($dntplgn_options['dntplgn_pm_label']) ? $dntplgn_options['dntplgn_pm_label'] : '(p/m)';
+    //$dntplgn_options = get_option('dntplgn_options');
+    $defaultCurrency = isset($dntplgn_options['dntplgn_payment_currency']) ? $dntplgn_options['dntplgn_payment_currency'] : 'USD';
+    $dntplgn_currency_symbol = isset($dntplgn_options['dntplgn_currency_symbol']) ? $dntplgn_options['dntplgn_currency_symbol'] : '$';
+    $dntplgn_return_url = isset($dntplgn_options['dntplgn_return_url']) ? $dntplgn_options['dntplgn_return_url'] : '';
+    $dntplgn_pm_label = isset($dntplgn_options['dntplgn_pm_label']) ? $dntplgn_options['dntplgn_pm_label'] : '(p/m)';
+		$dntplgn_company_matching = isset($dntplgn_options['dntplgn_company_matching']) ? $dntplgn_options['dntplgn_company_matching'] : '';
 
 		?>
 		<div class="wrap">
@@ -108,24 +107,20 @@ if ( ! function_exists( 'dntplgn_settings_page' ) ) {
 				</div>
 			<?php } ?>
 
-                        <div style="background:#FFF6D5;border: 1px solid #D1B655;color: #3F2502;margin: 10px 0;padding: 5px 5px 5px 10px;text-shadow: 1px 1px #FFFFFF;">
-                            <p>Read the usage instructions from the <a href="https://wp-ecommerce.net/wordpress-recurring-donation-plugin" target="_blank">Recurring PayPal Donation</a> plugin page.</p>
-                        </div>
-
 			<div class="postbox">
 			<h3 class="hndle"><label for="title">Quick Usage Guide</label></h3>
 			<div class="inside">
 			    <div class="dntplgn_description_shortcode_block">
 				    <p>
-					<?php _e( 'You can use the [dntplgn] shortcode in a WordPress post, page or sidebar text widget to show the recurring donation form. It will show the recurring donation form with default amount values of 25,50 and 100.', 'donateplugin' ); ?>
+							<?php _e( 'You can use the [dntplgn] shortcode in a WordPress post, page or sidebar text widget to show the recurring donation form. It will show the recurring donation form with default amount values of 25,50 and 100.', 'donateplugin' ); ?>
 				    </p>
 				    <p>
 					<?php _e( 'Alternatively, you can use the following shortcode with custom parameters to customize the donation form/widget.', 'donateplugin' ); ?> You can copy and paste it then customize the values: <br />
-                                        <input type='text' class='' onfocus='this.select();' readonly='readonly' value='[dntplgn recurring_amt1="10.00" recurring_amt2="50.00" recurring_amt3="200.00" item_name="Donation for XX" paypal_email="paypalemail@example.com"]' size='170'>
+            	<input type='text' class='' onfocus='this.select();' readonly='readonly' value='[dntplgn recurring_amt1="10.00" recurring_amt2="50.00" recurring_amt3="200.00" item_name="Donation for XX" paypal_email="paypalemail@example.com"]' size='170'>
 				    </p>
 				    <p>
 					<?php _e( 'The following shortcode shows how you can customize the currency code and symbol using shortcode parameters.', 'donateplugin' ); ?> You can copy and paste it then customize the values: <br />
-                                        <input type='text' class='' onfocus='this.select();' readonly='readonly' value='[dntplgn recurring_amt1="10.00" recurring_amt2="50.00" recurring_amt3="200.00" item_name="Donation for XX" paypal_email="paypalemail@example.com" currency_code="USD" currency_symbol="$"]' size='170'>
+            	<input type='text' class='' onfocus='this.select();' readonly='readonly' value='[dntplgn recurring_amt1="10.00" recurring_amt2="50.00" recurring_amt3="200.00" item_name="Donation for XX" paypal_email="paypalemail@example.com" currency_code="USD" currency_symbol="$"]' size='170'>
 				    </p>
 			    </div>
 			</div>
@@ -142,50 +137,50 @@ if ( ! function_exists( 'dntplgn_settings_page' ) ) {
 						</th>
 						<td class='dnt_account_row'>
 							<input type='text' name='dntplgn_paypal_account' size='70' id='dntplgn_paypal_account' value="<?php if ( '' != $dntplgn_options['dntplgn_paypal_email'] ) echo $dntplgn_options['dntplgn_paypal_email']; ?>" />
-                                                        <p class="description">The donation will go to this PayPal account.</p>
+              <p class="description">The donation will go to this PayPal account.</p>
 							<input type='hidden' id='dnt_tab_paypal' name='dnt_tab_paypal' value='1' />
 						</td>
 					</tr>
 
 					<tr>
 						<th class='dnt_row dnt_currency_row' scope="row">
-                                                    <?php _e( 'Currency Code', 'donateplugin' ); ?>
+            	<?php _e( 'Currency Code', 'donateplugin' ); ?>
 						</th>
 						<td class='dnt_account_row'>
-                                                    <select id="dntplgn_payment_currency" name="dntplgn_payment_currency">
-                                                        <option value="USD" <?php echo ($defaultCurrency == 'USD') ? 'selected="selected"' : ''; ?>>US Dollars (USD)</option>
-                                                        <option value="EUR" <?php echo ($defaultCurrency == 'EUR') ? 'selected="selected"' : ''; ?>>Euros (EUR)</option>
-                                                        <option value="GBP" <?php echo ($defaultCurrency == 'GBP') ? 'selected="selected"' : ''; ?>>Pounds Sterling (GBP)</option>
-                                                        <option value="AUD" <?php echo ($defaultCurrency == 'AUD') ? 'selected="selected"' : ''; ?>>Australian Dollars (AUD)</option>
-                                                        <option value="BRL" <?php echo ($defaultCurrency == 'BRL') ? 'selected="selected"' : ''; ?>>Brazilian Real (BRL)</option>
-                                                        <option value="CAD" <?php echo ($defaultCurrency == 'CAD') ? 'selected="selected"' : ''; ?>>Canadian Dollars (CAD)</option>
-                                                        <option value="CNY" <?php echo ($defaultCurrency == 'CNY') ? 'selected="selected"' : ''; ?>>Chinese Yuan (CNY)</option>
-                                                        <option value="CZK" <?php echo ($defaultCurrency == 'CZK') ? 'selected="selected"' : ''; ?>>Czech Koruna (CZK)</option>
-                                                        <option value="DKK" <?php echo ($defaultCurrency == 'DKK') ? 'selected="selected"' : ''; ?>>Danish Krone (DKK)</option>
-                                                        <option value="HKD" <?php echo ($defaultCurrency == 'HKD') ? 'selected="selected"' : ''; ?>>Hong Kong Dollar (HKD)</option>
-                                                        <option value="HUF" <?php echo ($defaultCurrency == 'HUF') ? 'selected="selected"' : ''; ?>>Hungarian Forint (HUF)</option>
-                                                        <option value="INR" <?php echo ($defaultCurrency == 'INR') ? 'selected="selected"' : ''; ?>>Indian Rupee (INR)</option>
-                                                        <option value="IDR" <?php echo ($defaultCurrency == 'IDR') ? 'selected="selected"' : ''; ?>>Indonesia Rupiah (IDR)</option>
-                                                        <option value="ILS" <?php echo ($defaultCurrency == 'ILS') ? 'selected="selected"' : ''; ?>>Israeli Shekel (ILS)</option>
-                                                        <option value="JPY" <?php echo ($defaultCurrency == 'JPY') ? 'selected="selected"' : ''; ?>>Japanese Yen (JPY)</option>
-                                                        <option value="MYR" <?php echo ($defaultCurrency == 'MYR') ? 'selected="selected"' : ''; ?>>Malaysian Ringgits (MYR)</option>
-                                                        <option value="MXN" <?php echo ($defaultCurrency == 'MXN') ? 'selected="selected"' : ''; ?>>Mexican Peso (MXN)</option>
-                                                        <option value="NZD" <?php echo ($defaultCurrency == 'NZD') ? 'selected="selected"' : ''; ?>>New Zealand Dollar (NZD)</option>
-                                                        <option value="NOK" <?php echo ($defaultCurrency == 'NOK') ? 'selected="selected"' : ''; ?>>Norwegian Krone (NOK)</option>
-                                                        <option value="PHP" <?php echo ($defaultCurrency == 'PHP') ? 'selected="selected"' : ''; ?>>Philippine Pesos (PHP)</option>
-                                                        <option value="PLN" <?php echo ($defaultCurrency == 'PLN') ? 'selected="selected"' : ''; ?>>Polish Zloty (PLN)</option>
-                                                        <option value="SGD" <?php echo ($defaultCurrency == 'SGD') ? 'selected="selected"' : ''; ?>>Singapore Dollar (SGD)</option>
-                                                        <option value="ZAR" <?php echo ($defaultCurrency == 'ZAR') ? 'selected="selected"' : ''; ?>>South African Rand (ZAR)</option>
-                                                        <option value="KRW" <?php echo ($defaultCurrency == 'KRW') ? 'selected="selected"' : ''; ?>>South Korean Won (KRW)</option>
-                                                        <option value="SEK" <?php echo ($defaultCurrency == 'SEK') ? 'selected="selected"' : ''; ?>>Swedish Krona (SEK)</option>
-                                                        <option value="CHF" <?php echo ($defaultCurrency == 'CHF') ? 'selected="selected"' : ''; ?>>Swiss Franc (CHF)</option>
-                                                        <option value="TWD" <?php echo ($defaultCurrency == 'TWD') ? 'selected="selected"' : ''; ?>>Taiwan New Dollars (TWD)</option>
-                                                        <option value="THB" <?php echo ($defaultCurrency == 'THB') ? 'selected="selected"' : ''; ?>>Thai Baht (THB)</option>
-                                                        <option value="TRY" <?php echo ($defaultCurrency == 'TRY') ? 'selected="selected"' : ''; ?>>Turkish Lira (TRY)</option>
-                                                        <option value="VND" <?php echo ($defaultCurrency == 'VND') ? 'selected="selected"' : ''; ?>>Vietnamese Dong (VND)</option>
-                                                        <option value="RUB" <?php echo ($defaultCurrency == 'RUB') ? 'selected="selected"' : ''; ?>>Russian Ruble (RUB)</option>
-                                                    </select>
-                                                    <p class="description">The donation will be paid in this currency.</p>
+              <select id="dntplgn_payment_currency" name="dntplgn_payment_currency">
+                <option value="USD" <?php echo ($defaultCurrency == 'USD') ? 'selected="selected"' : ''; ?>>US Dollars (USD)</option>
+                <option value="EUR" <?php echo ($defaultCurrency == 'EUR') ? 'selected="selected"' : ''; ?>>Euros (EUR)</option>
+                <option value="GBP" <?php echo ($defaultCurrency == 'GBP') ? 'selected="selected"' : ''; ?>>Pounds Sterling (GBP)</option>
+                <option value="AUD" <?php echo ($defaultCurrency == 'AUD') ? 'selected="selected"' : ''; ?>>Australian Dollars (AUD)</option>
+                <option value="BRL" <?php echo ($defaultCurrency == 'BRL') ? 'selected="selected"' : ''; ?>>Brazilian Real (BRL)</option>
+                <option value="CAD" <?php echo ($defaultCurrency == 'CAD') ? 'selected="selected"' : ''; ?>>Canadian Dollars (CAD)</option>
+                <option value="CNY" <?php echo ($defaultCurrency == 'CNY') ? 'selected="selected"' : ''; ?>>Chinese Yuan (CNY)</option>
+                <option value="CZK" <?php echo ($defaultCurrency == 'CZK') ? 'selected="selected"' : ''; ?>>Czech Koruna (CZK)</option>
+                <option value="DKK" <?php echo ($defaultCurrency == 'DKK') ? 'selected="selected"' : ''; ?>>Danish Krone (DKK)</option>
+                <option value="HKD" <?php echo ($defaultCurrency == 'HKD') ? 'selected="selected"' : ''; ?>>Hong Kong Dollar (HKD)</option>
+                <option value="HUF" <?php echo ($defaultCurrency == 'HUF') ? 'selected="selected"' : ''; ?>>Hungarian Forint (HUF)</option>
+                <option value="INR" <?php echo ($defaultCurrency == 'INR') ? 'selected="selected"' : ''; ?>>Indian Rupee (INR)</option>
+                <option value="IDR" <?php echo ($defaultCurrency == 'IDR') ? 'selected="selected"' : ''; ?>>Indonesia Rupiah (IDR)</option>
+                <option value="ILS" <?php echo ($defaultCurrency == 'ILS') ? 'selected="selected"' : ''; ?>>Israeli Shekel (ILS)</option>
+                <option value="JPY" <?php echo ($defaultCurrency == 'JPY') ? 'selected="selected"' : ''; ?>>Japanese Yen (JPY)</option>
+                <option value="MYR" <?php echo ($defaultCurrency == 'MYR') ? 'selected="selected"' : ''; ?>>Malaysian Ringgits (MYR)</option>
+                <option value="MXN" <?php echo ($defaultCurrency == 'MXN') ? 'selected="selected"' : ''; ?>>Mexican Peso (MXN)</option>
+                <option value="NZD" <?php echo ($defaultCurrency == 'NZD') ? 'selected="selected"' : ''; ?>>New Zealand Dollar (NZD)</option>
+                <option value="NOK" <?php echo ($defaultCurrency == 'NOK') ? 'selected="selected"' : ''; ?>>Norwegian Krone (NOK)</option>
+                <option value="PHP" <?php echo ($defaultCurrency == 'PHP') ? 'selected="selected"' : ''; ?>>Philippine Pesos (PHP)</option>
+                <option value="PLN" <?php echo ($defaultCurrency == 'PLN') ? 'selected="selected"' : ''; ?>>Polish Zloty (PLN)</option>
+                <option value="SGD" <?php echo ($defaultCurrency == 'SGD') ? 'selected="selected"' : ''; ?>>Singapore Dollar (SGD)</option>
+                <option value="ZAR" <?php echo ($defaultCurrency == 'ZAR') ? 'selected="selected"' : ''; ?>>South African Rand (ZAR)</option>
+                <option value="KRW" <?php echo ($defaultCurrency == 'KRW') ? 'selected="selected"' : ''; ?>>South Korean Won (KRW)</option>
+                <option value="SEK" <?php echo ($defaultCurrency == 'SEK') ? 'selected="selected"' : ''; ?>>Swedish Krona (SEK)</option>
+                <option value="CHF" <?php echo ($defaultCurrency == 'CHF') ? 'selected="selected"' : ''; ?>>Swiss Franc (CHF)</option>
+                <option value="TWD" <?php echo ($defaultCurrency == 'TWD') ? 'selected="selected"' : ''; ?>>Taiwan New Dollars (TWD)</option>
+                <option value="THB" <?php echo ($defaultCurrency == 'THB') ? 'selected="selected"' : ''; ?>>Thai Baht (THB)</option>
+                <option value="TRY" <?php echo ($defaultCurrency == 'TRY') ? 'selected="selected"' : ''; ?>>Turkish Lira (TRY)</option>
+                <option value="VND" <?php echo ($defaultCurrency == 'VND') ? 'selected="selected"' : ''; ?>>Vietnamese Dong (VND)</option>
+                <option value="RUB" <?php echo ($defaultCurrency == 'RUB') ? 'selected="selected"' : ''; ?>>Russian Ruble (RUB)</option>
+              </select>
+              <p class="description">The donation will be paid in this currency.</p>
 						</td>
 					</tr>
 
@@ -195,7 +190,7 @@ if ( ! function_exists( 'dntplgn_settings_page' ) ) {
 						</th>
 						<td class='dnt_account_row'>
 							<input type='text' name='dntplgn_currency_symbol' size='10' id='dntplgn_currency_symbol' value="<?php echo $dntplgn_currency_symbol; ?>" />
-                                                        <p class="description">This symbol is shown next to the recurring amount values. By default it will use the $ symbol if you don't specify a currency symbol.</p>
+              <p class="description">This symbol is shown next to the recurring amount values. By default it will use the $ symbol if you don't specify a currency symbol.</p>
 						</td>
 					</tr>
 
@@ -205,7 +200,7 @@ if ( ! function_exists( 'dntplgn_settings_page' ) ) {
 						</th>
 						<td class='dnt_account_row'>
 							<input type='text' name='dntplgn_return_url' size='70' id='dntplgn_return_url' value="<?php echo $dntplgn_return_url; ?>" />
-                                                        <p class="description">PayPal will send the user to this page after the payment.</p>
+              <p class="description">PayPal will send the user to this page after the payment.</p>
 						</td>
 					</tr>
 
@@ -215,7 +210,17 @@ if ( ! function_exists( 'dntplgn_settings_page' ) ) {
 						</th>
 						<td class='dnt_account_row'>
 							<input type='text' name='dntplgn_pm_label' size='30' id='dntplgn_pm_label' value="<?php echo $dntplgn_pm_label; ?>" />
-                                                        <p class="description">This label is used next to the recurring amount select options. Example: you can use a vlaue of p/m (short for per month). Leave this field empty to hide this label.</p>
+              <p class="description">This label is used next to the recurring amount select options. Example: you can use a vlaue of p/m (short for per month). Leave this field empty to hide this label.</p>
+						</td>
+					</tr>
+
+					<tr>
+						<th class='dnt_row dnt_matching_companies_row' scope="row">
+							<?php _e( 'List of companies that match donations', 'donateplugin' ); ?>
+						</th>
+						<td class='dnt_account_row'>
+							<textarea name='dntplgn_company_matching' rows="10" cols="80" id='dntplgn_company_matching'><?php echo $dntplgn_company_matching; ?></textarea>
+              <p class="description">Enter a line separated list of companies that offer donation matching.</p>
 						</td>
 					</tr>
 
@@ -228,12 +233,6 @@ if ( ! function_exists( 'dntplgn_settings_page' ) ) {
 			</div>
 			</div>
 
-		    </div></div><!-- End of poststuff and postbody -->
-
-                <div style="background: none repeat scroll 0 0 #FFF6D5;border: 1px solid #D1B655;color: #3F2502;margin: 10px 0;padding: 5px 5px 5px 10px;text-shadow: 1px 1px #FFFFFF;">
-                <p>If you need a robust method of accepting donations in WordPress, feel free to check out the <a href="https://www.tipsandtricks-hq.com/wordpress-estore-plugin-complete-solution-to-sell-digital-products-from-your-wordpress-blog-securely-1059?ap_id=wpecommerce" target="_blank">WP eStore Plugin</a></p>
-                </div>
-
 		</div><!-- end of wrap -->
 	<?php
 	}
@@ -242,6 +241,10 @@ if ( ! function_exists( 'dntplgn_settings_page' ) ) {
 // Enqueue plugins scripts and styles function
 if ( ! function_exists( 'dntplgn_enqueue_scripts' ) ) {
 	function dntplgn_enqueue_scripts() {
+		wp_enqueue_style('select2_style', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css');
+		wp_enqueue_script('select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js');
+		wp_enqueue_script('dropdown_select', plugins_url('js/dropdown-select.js', __FILE__));
+
 		wp_enqueue_script( 'dntplgn_script', plugins_url( 'js/script.js' , __FILE__ ), array( 'jquery', 'jquery-ui-core', 'jquery-ui-tabs' ) );
 		wp_enqueue_style( 'dntplgn_style', plugins_url( 'css/style.css' , __FILE__ ) );
 		wp_enqueue_style( 'jquery_ui_style', plugins_url( 'css/jquery-ui-styles.css' , __FILE__ ) );
@@ -277,40 +280,55 @@ if ( ! function_exists ( 'dntplgn_show_form' ) ) {
 			}
 		}
 
-                //Merchant paypal email
-                $merchant_account_email = $dntplgn_options['dntplgn_paypal_email'];
-                if(!empty($dntplgn_atts['paypal_email'])){
-                    //Shortcode has a paypal email specfied for it.
-                    $merchant_account_email = $dntplgn_atts['paypal_email'];//Override the paypal account to the one specified in the shortcode.
-                }
+    //Merchant paypal email
+    $merchant_account_email = $dntplgn_options['dntplgn_paypal_email'];
+    if(!empty($dntplgn_atts['paypal_email'])){
+        //Shortcode has a paypal email specfied for it.
+        $merchant_account_email = $dntplgn_atts['paypal_email'];//Override the paypal account to the one specified in the shortcode.
+    }
 
-                //Currency code
-                $currency_code = isset($dntplgn_options['dntplgn_payment_currency']) ? $dntplgn_options['dntplgn_payment_currency'] : 'USD';
-                if(!empty($dntplgn_atts['currency_code'])){
-                    //Shortcode has a currency code so use that one.
-                    $currency_code = $dntplgn_atts['currency_code'];
-                }
+    //Currency code
+    $currency_code = isset($dntplgn_options['dntplgn_payment_currency']) ? $dntplgn_options['dntplgn_payment_currency'] : 'USD';
+    if(!empty($dntplgn_atts['currency_code'])){
+        //Shortcode has a currency code so use that one.
+        $currency_code = $dntplgn_atts['currency_code'];
+    }
 
-                //Currency Symbol
-                $currency_symbol = isset($dntplgn_options['dntplgn_currency_symbol']) ? $dntplgn_options['dntplgn_currency_symbol'] : '$';
-                if(!empty($dntplgn_atts['currency_symbol'])){
-                    //Shortcode has a currency code so use that one.
-                    $currency_symbol = $dntplgn_atts['currency_symbol'];
-                }
+    //Currency Symbol
+    $currency_symbol = isset($dntplgn_options['dntplgn_currency_symbol']) ? $dntplgn_options['dntplgn_currency_symbol'] : '$';
+    if(!empty($dntplgn_atts['currency_symbol'])){
+        //Shortcode has a currency code so use that one.
+        $currency_symbol = $dntplgn_atts['currency_symbol'];
+    }
 
-                //Return URL
-                $return_url = isset($dntplgn_options['dntplgn_return_url']) ? $dntplgn_options['dntplgn_return_url'] : DNTPLGN_SITE_HOME_URL;
-                if(!empty($dntplgn_atts['return_url'])){
-                    //Shortcode has a return_url value so use that one.
-                    $return_url = $dntplgn_atts['return_url'];
-                }
+    //Return URL
+    $return_url = isset($dntplgn_options['dntplgn_return_url']) ? $dntplgn_options['dntplgn_return_url'] : DNTPLGN_SITE_HOME_URL;
+    if(!empty($dntplgn_atts['return_url'])){
+        //Shortcode has a return_url value so use that one.
+        $return_url = $dntplgn_atts['return_url'];
+    }
 
-                //Per month amount label
-                $per_month_label = isset($dntplgn_options['dntplgn_pm_label']) ? $dntplgn_options['dntplgn_pm_label'] : '';
-                if(!empty($dntplgn_atts['per_month_label'])){
-                    //Shortcode has a return_url value so use that one.
-                    $per_month_label = $dntplgn_atts['per_month_label'];
-                }
+    //Per month amount label
+    $per_month_label = isset($dntplgn_options['dntplgn_pm_label']) ? $dntplgn_options['dntplgn_pm_label'] : '';
+    if(!empty($dntplgn_atts['per_month_label'])){
+        //Shortcode has a return_url value so use that one.
+        $per_month_label = $dntplgn_atts['per_month_label'];
+    }
+
+		function insert_company_matching_selection_option($tag) {
+			global $dntplgn_options;
+			?>
+			<label for="companies_matching_donations_<?php echo $tag;?>">
+				Does your company or organization match donations?
+			</label>
+			<select class="companies_matching_donations_<?php echo $tag;?>" name="company_match">
+				<?php $matching_companies = isset($dntplgn_options['dntplgn_company_matching']) ? explode("\n", stripslashes(trim(implode("", explode("\\", $dntplgn_options['dntplgn_company_matching']))))) : '';
+					foreach ($matching_companies as $company) : ?>
+						<option value="<?php echo $company; ?>"><?php echo $company; ?></option>
+					<?php endforeach; ?>
+			</select>
+			<?php
+		}
 
 		ob_start(); ?>
 		<div id="tabs" class="dntplgn_form_wrapper">
@@ -321,10 +339,13 @@ if ( ! function_exists ( 'dntplgn_show_form' ) ) {
 			<div id="tabs-1">
 				<!--Monthly donate form-->
 				<form class="dntplgn_donate_monthly"  action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" class="dntplgn_form">
-                                        <div class="dntplgn_monthly_donation_select_label">
-                                            <?php _e( 'Select a Donation Option', 'donateplugin' ); ?>
-                                            <span class="dntplgn_payment_currency"><?php echo ' ('.$currency_code.')'; ?></span>
-                                        </div>
+
+					<?php insert_company_matching_selection_option("monthly"); ?>
+
+					<div class="dntplgn_monthly_donation_select_label">
+              <?php _e( 'Select a Donation Option', 'donateplugin' ); ?>
+              <span class="dntplgn_payment_currency"><?php echo ' ('.$currency_code.')'; ?></span>
+          </div>
 
 					<input type="hidden" name="cmd" value="_xclick-subscriptions">
 					<input type="hidden" name="business" value="<?php echo $merchant_account_email; ?>" />
@@ -360,6 +381,9 @@ if ( ! function_exists ( 'dntplgn_show_form' ) ) {
 			<div id="tabs-2">
 				<!--Donate once only form-->
 				<form class="dntplgn_donate_once" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+
+					<?php insert_company_matching_selection_option("once"); ?>
+
 					<div class="dntplgn_once_enter_donation_label">
 							<?php _e( 'Select a Donation Option', 'donateplugin' ); ?>
 							<span class="dntplgn_payment_currency"><?php echo ' ('.$currency_code.')'; ?></span>

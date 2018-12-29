@@ -105,3 +105,11 @@ div#tabs.dntplgn_form_wrapper form input.dntplgn_submit_button:hover {
   color: #F4CF71;
   cursor:pointer;
 }
+
+span.select2.select2-container {
+  margin-bottom: 15px;
+}
+
+select.companies_matching_donations {
+  /* width: 100%; */
+}
