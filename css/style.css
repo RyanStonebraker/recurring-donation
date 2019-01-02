@@ -110,6 +110,22 @@ span.select2.select2-container {
   margin-bottom: 15px;
 }
 
-select.companies_matching_donations {
-  /* width: 100%; */
+/* Donations Plugin Page CSS */
+table.donations {
+  width: 90%;
+  text-align: center;
+  margin: auto;
+  font-size: 15px;
+}
+table.donations tr {
+  background-color: whitesmoke;
+}
+table.donations tr:nth-of-type(even) {
+  background-color: #e3e3e3;
+}
+
+table.donations, table.donations th, table.donations td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  margin: auto;
 }

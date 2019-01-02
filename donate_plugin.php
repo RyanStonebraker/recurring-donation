@@ -14,39 +14,40 @@ License: GPLv2 or later
 define('DNTPLGN_SITE_HOME_URL', home_url());
 
 // Initialization of the plugin function
-if ( ! function_exists ( 'dntplgn_plugin_init' ) ) {
+if ( !function_exists ( 'dntplgn_plugin_init' ) ) {
 	function dntplgn_plugin_init() {
 		global $dntplgn_options;
 		// Internationalization, first(!)
 		load_plugin_textdomain( 'donateplugin', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-		if ( ! is_admin() || ( is_admin() && isset( $_GET['page'] ) && $_GET['page'] == 'dntplgn_plugin' ) ) {
+		if ( !is_admin() || ( is_admin() && isset( $_GET['page'] ) && $_GET['page'] == 'dntplgn_plugin' ) ) {
 			dntplgn_register_settings();
 		}
 	}
 }
 
 // Adding admin plugin settings page function
-if ( ! function_exists( 'add_dntplgn_admin_menu' ) ) {
+if ( !function_exists( 'add_dntplgn_admin_menu' ) ) {
 	function add_dntplgn_admin_menu() {
 		add_menu_page( __( 'Donate Plugin', 'donateplugin' ), __( 'Donate Plugin', 'donateplugin' ), 'manage_options', 'dntplgn_plugin', 'dntplgn_settings_page', 'dashicons-heart');
+		// add_submenu_page('dntplgn_plugin', 'Donations', 'Donations', 'manage_options', 'dntplgn_donations', 'dntplgn_donations_settings_page');
 		//call register settings function
 	}
 }
 
 // Initialization plugin settings function
-if ( ! function_exists( 'dntplgn_register_settings' ) ) {
+if ( !function_exists( 'dntplgn_register_settings' ) ) {
 	function dntplgn_register_settings() {
 		global $wpdb, $dntplgn_options;
 		$dntplgn_option_defaults = array(
-			'dntplgn_paypal_email'       => ''
+			'dntplgn_paypal_email' => ''
 		);
 		// install the option defaults
 		if ( is_multisite() ) {
-			if ( ! get_site_option( 'dntplgn_options' ) ) {
+			if ( !get_site_option( 'dntplgn_options' ) ) {
 				add_site_option( 'dntplgn_options', $dntplgn_option_defaults, '', 'yes' );
 			}
 		} else {
-			if ( ! get_option( 'dntplgn_options' ) )
+			if ( !get_option( 'dntplgn_options' ) )
 				add_option( 'dntplgn_options', $dntplgn_option_defaults, '', 'yes' );
 		}
 		// get options from the database
@@ -59,6 +60,37 @@ if ( ! function_exists( 'dntplgn_register_settings' ) ) {
 		update_option( 'dntplgn_options', $dntplgn_options );
 	}
 }
+
+// function make_donation_entry($amount, $company, $confirmed, $id) {
+// 	$confirm = $confirmed ? "&checkmark;": "";
+// 	return "
+// 		<tr>
+// 			<td>${$amount}</td>
+// 			<td>{$company}</td>
+// 			<td>{$confirm}</td>
+// 		</tr>
+// 	";
+// }
+//
+// if ( !function_exists( 'dntplgn_donations_settings_page' ) ) {
+// 	function dntplgn_donations_settings_page() {
+// 		global $dntplgn_options;
+// 		? >
+// 			<h1 style="text-align: center;">Donations</h1>
+// 			<table class="donations">
+// 				<thead>
+// 					<tr>
+// 						<th>Donation Amount</th>
+// 						<th>Company</th>
+// 						<th>Confirmed</th>
+// 					</tr>
+// 				</thead>
+// 				<tbody>
+// 				</tbody>
+// 			</table> -->
+// 		<?php
+// 	}
+// }
 // Admin plugin settings page content function
 if ( !function_exists( 'dntplgn_settings_page' ) ) {
 	function dntplgn_settings_page() {
@@ -101,7 +133,7 @@ if ( !function_exists( 'dntplgn_settings_page' ) ) {
 				<div class="updated fade">
 					<p><strong><?php echo $message; ?></strong></p>
 				</div>
-			<?php } elseif ( '' != $error_message && ! is_email( $_POST['dntplgn_paypal_account'] ) ) { ?>
+			<?php } elseif ( '' != $error_message && !is_email( $_POST['dntplgn_paypal_account'] ) ) { ?>
 				<div class="error">
 					<p><strong><?php echo $error_message; ?></strong></p>
 				</div>
@@ -239,7 +271,7 @@ if ( !function_exists( 'dntplgn_settings_page' ) ) {
 }
 
 // Enqueue plugins scripts and styles function
-if ( ! function_exists( 'dntplgn_enqueue_scripts' ) ) {
+if ( !function_exists( 'dntplgn_enqueue_scripts' ) ) {
 	function dntplgn_enqueue_scripts() {
 		wp_enqueue_style('select2_style', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css');
 		wp_enqueue_script('select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js');
@@ -248,11 +280,12 @@ if ( ! function_exists( 'dntplgn_enqueue_scripts' ) ) {
 		wp_enqueue_script( 'dntplgn_script', plugins_url( 'js/script.js' , __FILE__ ), array( 'jquery', 'jquery-ui-core', 'jquery-ui-tabs' ) );
 		wp_enqueue_style( 'dntplgn_style', plugins_url( 'css/style.css' , __FILE__ ) );
 		wp_enqueue_style( 'jquery_ui_style', plugins_url( 'css/jquery-ui-styles.css' , __FILE__ ) );
+		wp_enqueue_script('dntplgn_company_match', plugins_url('js/company_match.js', __FILE__));
 	}
 }
 
 // Plugin form content function
-if ( ! function_exists ( 'dntplgn_show_form' ) ) {
+if ( !function_exists ( 'dntplgn_show_form' ) ) {
 	function dntplgn_show_form( $atts ) {
 		global $dntplgn_options;
 
@@ -367,7 +400,7 @@ if ( ! function_exists ( 'dntplgn_show_form' ) ) {
 					<input type="hidden" name="p3" value="1">
 					<input type="hidden" name="t3" value="M">
 					<input type="hidden" name="currency_code" value="<?php echo $currency_code; ?>">
-                                        <input type="hidden" name="return" value="<?php echo $return_url; ?>">
+          <input type="hidden" name="return" value="<?php echo $return_url; ?>">
 					<input type="hidden" name="bn" value="TipsandTricks_SP">
 					<input type="hidden" name="on0" value="Donate" />
 					<input type="hidden" name="os0" value="Monthly" />
