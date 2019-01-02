@@ -280,7 +280,6 @@ if ( !function_exists( 'dntplgn_enqueue_scripts' ) ) {
 		wp_enqueue_script( 'dntplgn_script', plugins_url( 'js/script.js' , __FILE__ ), array( 'jquery', 'jquery-ui-core', 'jquery-ui-tabs' ) );
 		wp_enqueue_style( 'dntplgn_style', plugins_url( 'css/style.css' , __FILE__ ) );
 		wp_enqueue_style( 'jquery_ui_style', plugins_url( 'css/jquery-ui-styles.css' , __FILE__ ) );
-		wp_enqueue_script('dntplgn_company_match', plugins_url('js/company_match.js', __FILE__));
 	}
 }
 
